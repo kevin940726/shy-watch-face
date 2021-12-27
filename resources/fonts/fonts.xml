@@ -1,0 +1,5 @@
+<fonts>
+  <font id="HoursFont" filename="titillium-web-bold-68.fnt" antialias="true"/>
+  <font id="MinutesFont" filename="titillium-web-light-66.fnt" antialias="true"/>
+  <font id="DateFont" filename="titillium-web-semi-bold-24.fnt" antialias="true"/>
+</fonts>
