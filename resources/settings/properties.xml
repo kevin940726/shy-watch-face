@@ -1,0 +1,3 @@
+<properties>
+	<property id="showSeconds" type="boolean">false</property>
+</properties>

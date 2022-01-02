@@ -15,6 +15,7 @@ class ShyView extends WatchUi.WatchFace {
     private var dateFont;
     private var heart;
     private var heartAnimationDelegate;
+    private var showSeconds;
 
     function initialize() {
         WatchFace.initialize();
@@ -23,6 +24,10 @@ class ShyView extends WatchUi.WatchFace {
         hoursFont = Application.loadResource(Rez.Fonts.HoursFont);
         minutesFont = Application.loadResource(Rez.Fonts.MinutesFont);
         dateFont = Application.loadResource(Rez.Fonts.DateFont);
+    }
+
+    function onSettingsChanged() {
+        showSeconds = Application.Properties.getValue("showSeconds");
     }
 
     // Load your resources here
@@ -58,9 +63,14 @@ class ShyView extends WatchUi.WatchFace {
 
         drawOlaf(dc);
         drawHoursMinutes(dc);
+        drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
         drawBattery(dc);
+    }
+
+    function onPartialUpdate(dc) {
+        drawSecondsText(dc, true);
     }
 
     private function drawOlaf(dc) {
@@ -79,7 +89,7 @@ class ShyView extends WatchUi.WatchFace {
         var x = screenWidth / 2;
         var y = screenHeight - olafImage.getHeight() - 22;
 
-        // Draw hours.
+        // Draw hours
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             x - 2,
@@ -89,13 +99,49 @@ class ShyView extends WatchUi.WatchFace {
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
         );
 
-        // Draw minutes.
+        // Draw minutes
         dc.drawText(
             x + 2,
             y,
             minutesFont,
             minutes,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+    }
+
+    private function drawSecondsText(dc, isPartialUpdate) {
+        if (!showSeconds) {
+            return;
+        }
+
+        var clockTime = System.getClockTime();
+        var minutes = clockTime.min.format("%02d");
+        var seconds = clockTime.sec.format("%02d");
+
+        var minutesWidth = 48; // dc.getTextWidthInPixels(minutes, minutesFont)
+        var x = screenWidth / 2 + 2 + minutesWidth + 5; // Margin right 5px
+        var y = screenHeight - olafImage.getHeight() - 22 - 2; // Visual adjustment 2px
+
+        if (isPartialUpdate) {
+            dc.setClip(
+                x,
+                y + 5, // Adjust for text justification 5px
+                18, // dc.getTextWidthInPixels(seconds, dateFont)
+                15
+            ); // Fixed height 15px
+            // Use the background color to force repaint the clip
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
+            dc.clear();
+        } else {
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        }
+
+        dc.drawText(
+            x,
+            y,
+            dateFont,
+            seconds,
+            Graphics.TEXT_JUSTIFY_LEFT
         );
     }
 
@@ -138,7 +184,7 @@ class ShyView extends WatchUi.WatchFace {
             x,
             y,
             dateFont,
-            heartRate.format("%d"),
+            heartRate == 0 ? "--" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
