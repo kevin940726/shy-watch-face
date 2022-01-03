@@ -1,9 +1,8 @@
-import Toybox.Graphics;
-import Toybox.Lang;
-import Toybox.System;
-import Toybox.WatchUi;
-import Toybox.ActivityMonitor;
-
+using Toybox.Graphics;
+using Toybox.Lang;
+using Toybox.System;
+using Toybox.WatchUi;
+using Toybox.ActivityMonitor;
 using Toybox.Time.Gregorian as Date;
 
 class ShyView extends WatchUi.WatchFace {
@@ -14,8 +13,9 @@ class ShyView extends WatchUi.WatchFace {
     private var minutesFont;
     private var dateFont;
     private var heart;
-    private var heartAnimationDelegate;
-    private var showSeconds;
+    private var blinkingEyes;
+    private var showSeconds = false;
+    private var isLowPowerMode = false;
 
     function initialize() {
         WatchFace.initialize();
@@ -42,18 +42,19 @@ class ShyView extends WatchUi.WatchFace {
             :locX => screenWidth * 3 / 4,
             :locY => (screenHeight - heartResource.getHeight()) / 2 + 2, // Visual adjustment
         });
-        heartAnimationDelegate = new HeartAnimationDelegate(heart);
-
         addLayer(heart);
+
+        blinkingEyes = new BlinkingEyes(dc);
+    }
+
+    function pumpHeart() {
+        heart.play(null);
     }
 
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        heart.play({
-            :delegate => heartAnimationDelegate
-        });
     }
 
     // Update the view
@@ -61,12 +62,21 @@ class ShyView extends WatchUi.WatchFace {
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
 
+        // Draw the UI
         drawOlaf(dc);
         drawHoursMinutes(dc);
         drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
         drawBattery(dc);
+
+        // Draw optional animations
+        if (!isLowPowerMode) {
+            pumpHeart();
+            if (System.getClockTime().sec % 15 == 0) {
+                blinkingEyes.blink();
+            }
+        }
     }
 
     function onPartialUpdate(dc) {
@@ -127,8 +137,8 @@ class ShyView extends WatchUi.WatchFace {
                 x,
                 y + 5, // Adjust for text justification 5px
                 18, // dc.getTextWidthInPixels(seconds, dateFont)
-                15
-            ); // Fixed height 15px
+                15 // Fixed height 15px
+            );
             // Use the background color to force repaint the clip
             dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
             dc.clear();
@@ -243,13 +253,14 @@ class ShyView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() as Void {
-        heart.play({
-            :delegate => heartAnimationDelegate
-        });
+        isLowPowerMode = false;
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
+        isLowPowerMode = true;
+        blinkingEyes.stop();
+        heart.stop();
     }
 
 }
