@@ -11,26 +11,30 @@ class BlinkingEyes {
     }
 
     function blink() {
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+      try {
+          dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
 
-        if (blinkCount % 2 == 0) {
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        } else {
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        }
+          if (blinkCount % 2 == 0) {
+              dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+          } else {
+              dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+          }
 
-        dc.fillRectangle(85, 178, 8, 6);
-        dc.fillRectangle(125, 178, 8, 6);
+          dc.fillRectangle(85, 178, 8, 6);
+          dc.fillRectangle(125, 178, 8, 6);
 
-        if (blinkCount >= 3) {
-            stop();
-            return;
-        }
+          if (blinkCount >= 3) {
+              stop();
+              return;
+          }
 
-        blinkingTimer = new Timer.Timer();
-        blinkingTimer.start(method(:blink), 200, false);
+          blinkingTimer = new Timer.Timer();
+          blinkingTimer.start(method(:blink), 200, false);
 
-        blinkCount += 1;
+          blinkCount += 1;
+      } catch (err) {
+          // Ignore the error
+      }
     }
 
     function stop() {

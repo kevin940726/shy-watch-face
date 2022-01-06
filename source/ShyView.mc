@@ -16,6 +16,7 @@ class ShyView extends WatchUi.WatchFace {
     private var blinkingEyes;
     private var showSeconds = false;
     private var isLowPowerMode = false;
+    private var isHidden = false;
 
     function initialize() {
         WatchFace.initialize();
@@ -55,6 +56,7 @@ class ShyView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
+        isHidden = false;
     }
 
     // Update the view
@@ -120,7 +122,7 @@ class ShyView extends WatchUi.WatchFace {
     }
 
     private function drawSecondsText(dc, isPartialUpdate) {
-        if (!showSeconds) {
+        if (!showSeconds || isHidden) {
             return;
         }
 
@@ -249,6 +251,7 @@ class ShyView extends WatchUi.WatchFace {
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() as Void {
+        isHidden = true;
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.
