@@ -73,7 +73,7 @@ class ShyView extends WatchUi.WatchFace {
         drawBattery(dc);
 
         // Draw optional animations
-        if (!isLowPowerMode) {
+        if (!isLowPowerMode && !isHidden) {
             pumpHeart();
             if (System.getClockTime().sec % 15 == 0) {
                 blinkingEyes.blink();

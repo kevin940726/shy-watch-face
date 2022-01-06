@@ -39,6 +39,8 @@ class BlinkingEyes {
 
     function stop() {
         blinkCount = 0;
-        blinkingTimer.stop();
+        if (blinkingTimer) {
+          blinkingTimer.stop();
+        }
     }
 }
