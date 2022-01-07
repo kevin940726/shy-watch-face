@@ -2,6 +2,7 @@ using Toybox.Graphics;
 using Toybox.Lang;
 using Toybox.System;
 using Toybox.WatchUi;
+using Toybox.Activity;
 using Toybox.ActivityMonitor;
 using Toybox.Time.Gregorian as Date;
 
@@ -175,12 +176,13 @@ class ShyView extends WatchUi.WatchFace {
     private function drawHeartRateText(dc) {
         var heartRate = 0;
         
-        if (ActivityMonitor has :INVALID_HR_SAMPLE) {
-            var heartrateIterator = ActivityMonitor.getHeartRateHistory(null, false);
-            var currentHeartrate = heartrateIterator.next().heartRate;
-
-            if (currentHeartrate != ActivityMonitor.INVALID_HR_SAMPLE) {
-                heartRate = currentHeartrate;
+        var info = Activity.getActivityInfo();
+        if (info != null) {
+            heartRate = info.currentHeartRate;
+        } else {
+            var latestHeartRateSample = ActivityMonitor.getHeartRateHistory(1, true).next();
+            if (latestHeartRateSample != null) {
+                heartRate = latestHeartRateSample.heartRate;
             }
         }
 
@@ -189,14 +191,14 @@ class ShyView extends WatchUi.WatchFace {
         var y = screenHeight / 2;
 
         dc.setColor(
-            heartRate > 120 ? Graphics.COLOR_DK_RED : Graphics.COLOR_WHITE,
+            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_WHITE,
             Graphics.COLOR_TRANSPARENT
         );
         dc.drawText(
             x,
             y,
             dateFont,
-            heartRate == 0 ? "--" : heartRate.format("%d"),
+            (heartRate == 0 || heartRate == null) ? "--" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
