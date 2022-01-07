@@ -100,7 +100,7 @@ class ShyView extends WatchUi.WatchFace {
         var minutes = clockTime.min.format("%02d");
 
         var x = screenWidth / 2;
-        var y = screenHeight - olafImage.getHeight() - 22;
+        var y = screenHeight - olafImage.getHeight() - 20;
 
         // Draw hours
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
@@ -133,7 +133,7 @@ class ShyView extends WatchUi.WatchFace {
 
         var minutesWidth = 48; // dc.getTextWidthInPixels(minutes, minutesFont)
         var x = screenWidth / 2 + 2 + minutesWidth + 5; // Margin right 5px
-        var y = screenHeight - olafImage.getHeight() - 22 - 2; // Visual adjustment 2px
+        var y = screenHeight - olafImage.getHeight() - 20 - 2; // Visual adjustment 2px
 
         if (isPartialUpdate) {
             dc.setClip(

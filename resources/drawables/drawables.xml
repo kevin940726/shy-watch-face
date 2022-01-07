@@ -1,6 +1,6 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
-    <bitmap id="Olaf" filename="olaf-2x.png" dithering="none">
+    <bitmap id="Olaf" filename="olaf.png" dithering="none">
         <palette>
             <color>000000</color>
             <color>FFFFFF</color>
