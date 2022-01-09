@@ -5,6 +5,7 @@
 </p>
 
 ### [Connect IQ Store page](https://apps.garmin.com/en-US/apps/c4ec2a0c-61ba-497a-843e-64f3a109af82)
+### [Read the blog post](https://kaihao.dev/posts/Develop-a-Garmin-watch-face)
 
 ---
 
